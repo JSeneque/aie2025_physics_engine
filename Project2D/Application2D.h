@@ -4,6 +4,9 @@
 #include "Renderer2D.h"
 #include "PhysicsScene.h"
 
+class Sphere;
+class Rocket;
+
 class Application2D : public aie::Application {
 public:
 
@@ -24,7 +27,11 @@ protected:
 	aie::Font*			m_font;
 
 	PhysicsScene* m_physicsScene;
+	Sphere* ball1;
+	Sphere* particle;
 
+	Rocket* rocket;
 
 	float m_timer;
+	float m_interval;
 };

@@ -21,6 +21,8 @@ public:
 	void setTimeStep(const float timeStep);
 	float getTimeStep() const;
 
+	static bool sphere2Sphere(PhysicsObject*, PhysicsObject*);
+
 protected:
 	glm::vec2 m_gravity;
 	float m_timeStep;

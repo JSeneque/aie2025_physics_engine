@@ -1,5 +1,6 @@
 #include "PhysicsScene.h"
 #include "PhysicsObject.h"
+#include "Sphere.h"
 
 PhysicsScene::PhysicsScene() : m_timeStep{ 0.01f }, m_gravity{glm::vec2(0,0)}
 {
@@ -8,6 +9,10 @@ PhysicsScene::PhysicsScene() : m_timeStep{ 0.01f }, m_gravity{glm::vec2(0,0)}
 
 PhysicsScene::~PhysicsScene()
 {
+	for (auto pActor : m_actors)
+	{
+		delete pActor;
+	}
 }
 
 void PhysicsScene::addActor(PhysicsObject* actor)
@@ -41,6 +46,24 @@ void PhysicsScene::update(float dt)
 		}
 
 		accumulatedTime -= m_timeStep;
+
+		// check for collisions (ideally you'd want to have some sort of 
+		// scene management in place)
+		int actorCount = m_actors.size();
+
+		// need to check for collisions against all objects except this one.
+		for (int outer = 0; outer < actorCount - 1; outer++)
+		{
+			for (int inner = outer + 1; inner < actorCount; inner++)
+			{
+				PhysicsObject* object1 = m_actors[outer];
+				PhysicsObject* object2 = m_actors[inner];
+
+				// for now we can assume both shapes are spheres, 
+				// since that is all we’ve implemented for now.
+				sphere2Sphere(object1, object2);
+			}
+		}
 	}
 }
 
@@ -70,6 +93,30 @@ void PhysicsScene::setTimeStep(const float timeStep)
 float PhysicsScene::getTimeStep() const
 {
 	return m_timeStep;
+}
+
+bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	// try to cast objects to sphere and sphere
+	Sphere* sphere1 = dynamic_cast<Sphere*>(obj1);
+	Sphere* sphere2 = dynamic_cast<Sphere*>(obj2);
+	// if we are successful then test for collision
+	if (sphere1 != nullptr && sphere2 != nullptr)
+	{
+		// TODO do the necessary maths in here
+		// compare the distance between their centres and if smaller than the sum of their radius,
+		// then they have collided
+		if (glm::distance(sphere1->getPosition(), sphere2->getPosition()) 
+			< (sphere1->getRadius() + sphere2->getRadius()))
+		{
+			// TODO if the spheres touch, set their velocities to zero for now
+			sphere1->setVelocity(glm::vec2(0, 0));
+			sphere2->setVelocity(glm::vec2(0, 0));
+		}
+		
+	}
+
+	return false;
 }
 
 
