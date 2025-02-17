@@ -20,7 +20,7 @@ void Rigidbody::applyForce(glm::vec2 force)
 {
     // convert force into acceleration
     glm::vec2 acceleration = force / m_mass;
-    // integrate acceleration into velocity
+    // integrate acceleration into velocityf
     m_velocity += acceleration;
 
 }

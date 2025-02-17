@@ -4,7 +4,7 @@
 #include "Input.h"
 #include "Gizmos.h"
 #include "Sphere.h"
-#include "Rocket.h"
+#include "Plane.h"
 #include "glm\ext.hpp"
 #include <iostream>
 
@@ -24,27 +24,25 @@ bool Application2D::startup() {
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->setGravity(glm::vec2(0,-10));
+	m_physicsScene->setGravity(glm::vec2(0, -9.82f));
 	m_physicsScene->setTimeStep(0.01f);
 
-	rocket = new Rocket(glm::vec2(0, -35), glm::vec2(0), 1.0f, 10, glm::vec4(1, 0, 0, 1), 0.1f);
-	//ball1 = new Sphere(glm::vec2(0, -35), glm::vec2(0), 4.0f, 10, glm::vec4(1, 0, 0, 1));
-	particle = new Sphere(rocket->getPosition() + glm::vec2(0,-12), glm::vec2(0), 4.0f, 1, glm::vec4(1, 1, 1, 0.75));
-	
-	m_physicsScene->addActor(rocket);
-	m_physicsScene->addActor(particle);
+	Sphere* ball1 = new Sphere(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Sphere* ball2 = new Sphere(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Plane* plane = new Plane(glm::vec2(0, 1), -30);
 
-	m_interval = 0.0f;
+	m_physicsScene->addActor(ball1);
+	m_physicsScene->addActor(ball2);
+	m_physicsScene->addActor(plane);
 
 	return true;
 }
 
 void Application2D::shutdown() {
 	
-	//delete m_font;
-	//delete m_texture;
-	//delete m_shipTexture;
-	//delete m_2dRenderer;
+	delete ball1;
+	delete plane1;
+	delete plane2;
 }
 
 void Application2D::update(float deltaTime) {
@@ -58,23 +56,7 @@ void Application2D::update(float deltaTime) {
 	m_physicsScene->draw();
 
 
-	m_interval += deltaTime;
-
-	// at certain intervals, reduce the mass, spawn an other particle
-	if (m_interval > 0.5f && rocket->getMass() > 0)
-	{
-		m_interval = 0;
-		rocket->expelledFuel();
-		Sphere* particle = new Sphere(rocket->getPosition() + glm::vec2(0,-12), glm::vec2(0), 4.0f, 1, glm::vec4(1, 1, 1, 0.75));
-		m_physicsScene->addActor(particle);
-		particle->applyForceToActor(rocket, glm::vec2(0, 2));
-		
-		std::cout << "Mass: " << rocket->getMass() << "\n";
-	}
-	
-	
-	
-	
+	//ball1->fixedUpdate(glm::vec2(0.0, 0.0), 0.01);
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))

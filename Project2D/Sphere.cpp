@@ -3,7 +3,7 @@
 #include "Gizmos.h"
 
 Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius, glm::vec4 colour) :
-    Rigidbody(SPHERE, position, velocity, 0.0f, mass)
+    Rigidbody(ShapeType::SPHERE, position, velocity, 0.0f, mass)
 {
     m_radius = radius;
     m_colour = colour;
@@ -11,6 +11,7 @@ Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius,
 
 Sphere::~Sphere()
 {
+    delete this;
 }
 
 void Sphere::draw()

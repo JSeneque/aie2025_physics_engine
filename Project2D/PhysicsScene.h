@@ -4,6 +4,8 @@
 
 class PhysicsObject;
 
+#define SHAPE_COUNT 2
+
 class PhysicsScene
 {
 public:
@@ -22,6 +24,9 @@ public:
 	float getTimeStep() const;
 
 	static bool sphere2Sphere(PhysicsObject*, PhysicsObject*);
+	static bool sphere2Plane(PhysicsObject*, PhysicsObject*);
+	static bool plane2Plane(PhysicsObject*, PhysicsObject*);
+	static bool plane2Sphere(PhysicsObject*, PhysicsObject*);
 
 protected:
 	glm::vec2 m_gravity;

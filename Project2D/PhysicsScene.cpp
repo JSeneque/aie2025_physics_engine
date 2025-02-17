@@ -1,6 +1,7 @@
 #include "PhysicsScene.h"
 #include "PhysicsObject.h"
 #include "Sphere.h"
+#include "Plane.h"
 
 PhysicsScene::PhysicsScene() : m_timeStep{ 0.01f }, m_gravity{glm::vec2(0,0)}
 {
@@ -32,6 +33,15 @@ void PhysicsScene::removeActor(PhysicsObject* actor)
 	}
 }
 
+// function pointer array for doing our collsions
+typedef bool(*fn)(PhysicsObject*, PhysicsObject*);
+
+static fn collisionFunctionArray[] =
+{
+	PhysicsScene::plane2Plane, PhysicsScene::plane2Sphere,
+	PhysicsScene::sphere2Plane, PhysicsScene::sphere2Sphere,
+};
+
 void PhysicsScene::update(float dt)
 {
 	// update physics at a fixed time step
@@ -58,10 +68,17 @@ void PhysicsScene::update(float dt)
 			{
 				PhysicsObject* object1 = m_actors[outer];
 				PhysicsObject* object2 = m_actors[inner];
+				int shapeId1 = object1->getShapeID();
+				int shapeId2 = object2->getShapeID();
 
-				// for now we can assume both shapes are spheres, 
-				// since that is all we’ve implemented for now.
-				sphere2Sphere(object1, object2);
+				// using function pointers
+				int functionIdx = (shapeId1 * SHAPE_COUNT) + shapeId2;
+				fn collisionFunctionPtr = collisionFunctionArray[functionIdx];
+				if (collisionFunctionPtr != nullptr)
+				{
+					// did a collision occur?
+					collisionFunctionPtr(object1, object2);
+				}
 			}
 		}
 	}
@@ -117,6 +134,42 @@ bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 	}
 
 	return false;
+}
+
+bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	Sphere* sphere = dynamic_cast<Sphere*>(obj1); 
+	Plane* plane = dynamic_cast<Plane*>(obj2);
+
+	//if we are successful then test for collision
+	if (sphere != nullptr && plane != nullptr)
+	{
+		// get the normal for the plane
+		glm::vec2 collisionNormal = plane->getNormal();
+		float sphereToPlane = glm::dot(sphere->getPosition(), plane->getNormal()) - plane->getDistance();
+
+		float intersection = sphere->getRadius() - sphereToPlane;
+		float velocityOutOfPlane = glm::dot(sphere->getVelocity(), plane->getNormal());
+		if (intersection > 0 && velocityOutOfPlane < 0)
+		{
+			//set sphere velocity to zero here
+			sphere->applyForce(-sphere->getVelocity() * sphere->getMass());
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool PhysicsScene::plane2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	return false;
+}
+
+bool PhysicsScene::plane2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	// reverse the order of arguments, as obj1 is the plane and obj2 is the sphere
+	return sphere2Plane(obj2, obj1);
 }
 
 
