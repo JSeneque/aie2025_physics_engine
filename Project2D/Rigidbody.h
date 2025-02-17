@@ -15,6 +15,11 @@ public:
 	glm::vec2 getVelocity() const;
 	float getMass() const;
 
+	void resolveCollision(Rigidbody* other);
+
+private:
+	float getKineticEnergy();
+
 
 protected:
 	glm::vec2 m_position;
