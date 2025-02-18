@@ -127,8 +127,8 @@ bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 			< (sphere1->getRadius() + sphere2->getRadius()))
 		{
 			// TODO if the spheres touch, set their velocities to zero for now
-			sphere1->setVelocity(glm::vec2(0, 0));
-			sphere2->setVelocity(glm::vec2(0, 0));
+			//sphere1->setVelocity(glm::vec2(0, 0));
+			//sphere2->setVelocity(glm::vec2(0, 0));
 			sphere1->resolveCollision(sphere2);
 			sphere2->resolveCollision(sphere1);
 		}
@@ -155,7 +155,7 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
 			
-			sphere->applyForce(-sphere->getVelocity() * sphere->getMass());
+			//sphere->applyForce(-sphere->getVelocity() * sphere->getMass());
 			plane->resolveCollision(sphere);
 			return true;
 		}
