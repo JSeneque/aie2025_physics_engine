@@ -25,11 +25,6 @@ protected:
 	aie::Font*			m_font;
 
 	PhysicsScene* m_physicsScene;
-	Sphere* ball1;
-	Sphere* ball2;
-	Sphere* ball3;
-	Plane* plane1;
-	Plane* plane2;
 
 	float m_timer;
 };

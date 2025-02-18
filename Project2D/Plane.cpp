@@ -1,5 +1,6 @@
 #include "Plane.h"
 #include "Gizmos.h"
+#include "Rigidbody.h"
 
 Plane::Plane() : PhysicsObject(ShapeType::PLANE), m_distanceToOrigin{ 0 }, m_normal {glm::vec2(0,1)}
 {
@@ -43,4 +44,22 @@ glm::vec2 Plane::getNormal()
 float Plane::getDistance()
 {
 	return m_distanceToOrigin;
+}
+
+void Plane::resolveCollision(Rigidbody* other)
+{
+    glm::vec2 normal = m_normal;
+    glm::vec2 relativeVelocity = other->getVelocity();
+
+    // if the objects are already moving apart, we don't need to do anything
+    if (glm::dot(normal, relativeVelocity) >= 0)
+        return;
+
+    float elasticity = 1;
+
+    // calculate the force
+    glm::vec2 force = relativeVelocity - (1 + elasticity) * relativeVelocity * normal * normal;
+
+    // apply force to sphere
+    other->applyForce(force);
 }

@@ -129,6 +129,8 @@ bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 			// TODO if the spheres touch, set their velocities to zero for now
 			sphere1->setVelocity(glm::vec2(0, 0));
 			sphere2->setVelocity(glm::vec2(0, 0));
+			sphere1->resolveCollision(sphere2);
+			sphere2->resolveCollision(sphere1);
 		}
 		
 	}
@@ -152,8 +154,9 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 		float velocityOutOfPlane = glm::dot(sphere->getVelocity(), plane->getNormal());
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
-			//set sphere velocity to zero here
+			
 			sphere->applyForce(-sphere->getVelocity() * sphere->getMass());
+			plane->resolveCollision(sphere);
 			return true;
 		}
 	}
