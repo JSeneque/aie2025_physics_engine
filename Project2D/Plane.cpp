@@ -47,27 +47,15 @@ float Plane::getDistance()
 	return m_distanceToOrigin;
 }
 
-void Plane::resolveCollision(Rigidbody* other)
+//void Plane::resolveCollision(Rigidbody* other) )
+void Plane::resolveCollision(Rigidbody* other, glm::vec2 contact)
 {
-    // the collision normal is simply the plane normal
-    glm::vec2 collisionNormal = m_normal;
-    // get the other actors velocity
+    // the plane is not moving, so the relative velocity is just the other's velocity
     glm::vec2 relativeVelocity = other->getVelocity();
+    float elasticity = other->getElasticity();
+    float j = glm::dot(-(1 + elasticity) * (relativeVelocity), m_normal) / (1 / other->getMass());
 
-    // if the objects are already moving apart, we don't need to do anything
-    if (glm::dot(collisionNormal, relativeVelocity) >= 0)
-        return;
+    glm::vec2 force = m_normal * j;
 
-    // hard code a perfect elasticity for now
-    float elasticity = 1;
-    // calculate the force
-    float jImpulse = glm::dot(-(1 + elasticity) * (relativeVelocity), collisionNormal) /
-        (1 / other->getMass());
-        //glm::vec2 force = relativeVelocity - (1 + elasticity) * relativeVelocity * normal * normal;
-
-    // force includes the direction normal of other objects
-    glm::vec2 force = collisionNormal * jImpulse;
-
-    // apply force to sphere
-    other->applyForce(force);
+    other->applyForce(force, contact - other->getPosition());
 }

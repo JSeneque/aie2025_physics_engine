@@ -18,7 +18,8 @@ public:
 	glm::vec2 getNormal();
 	float getDistance();
 
-	void resolveCollision(Rigidbody* other);
+	//void resolveCollision(Rigidbody* other);
+	void resolveCollision(Rigidbody* other, glm::vec2 contact);
 
 protected:
 	glm::vec2 m_normal;

@@ -129,8 +129,8 @@ bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 			// TODO if the spheres touch, set their velocities to zero for now
 			//sphere1->setVelocity(glm::vec2(0, 0));
 			//sphere2->setVelocity(glm::vec2(0, 0));
-			sphere1->resolveCollision(sphere2);
-			sphere2->resolveCollision(sphere1);
+			sphere1->resolveCollision(sphere2, 0.5f * (sphere1->getPosition() + sphere2->getPosition()));
+			//sphere2->resolveCollision(sphere1);
 		}
 		
 	}
@@ -148,6 +148,7 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 	{
 		// get the normal for the plane
 		glm::vec2 collisionNormal = plane->getNormal();
+		glm::vec2 contact = sphere->getPosition() = (collisionNormal * -sphere->getRadius());
 		float sphereToPlane = glm::dot(sphere->getPosition(), plane->getNormal()) - plane->getDistance();
 
 		float intersection = sphere->getRadius() - sphereToPlane;
@@ -156,7 +157,7 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 		{
 			
 			//sphere->applyForce(-sphere->getVelocity() * sphere->getMass());
-			plane->resolveCollision(sphere);
+			plane->resolveCollision(sphere, contact);
 			return true;
 		}
 	}
