@@ -21,7 +21,7 @@ public:
 
 	void resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal = nullptr);
 
-private:
+public:
 	float getKineticEnergy();
 
 

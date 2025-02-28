@@ -16,10 +16,11 @@ void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
 {
     // move to new position
     m_position += getVelocity() * timeStep;
-    // apply gravity
-    applyForce(gravity * getMass() * timeStep, getPosition());
     // update rotation according to the angular velocty
     m_orientation += m_angularVelocity * timeStep;
+    // apply gravity
+    applyForce(gravity * getMass() * timeStep, getPosition());
+
 }
 
 void Rigidbody::applyForce(glm::vec2 force, glm::vec2 pos)
@@ -76,15 +77,10 @@ float Rigidbody::getAngularVelocity() const
 
 float Rigidbody::getKineticEnergy()
 {
-    // Retrieve the object's mass
-    float mass = getMass();
-    // Retrieve the object's velocity
-    glm::vec2 velocity = getVelocity();
-
-    float speedSquared = glm::dot(velocity, velocity); // Equivalent to v^2
-
-    return 0.5f * mass * speedSquared;
+    return 0.5f * (m_mass * glm::dot(m_velocity, m_velocity) +
+        m_moment * m_angularVelocity * m_angularVelocity);
 }
+
 
 void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal)
 {
