@@ -149,7 +149,7 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 	{
 		// get the normal for the plane
 		glm::vec2 collisionNormal = plane->getNormal();
-		glm::vec2 contact = sphere->getPosition() = (collisionNormal * -sphere->getRadius());
+		glm::vec2 contact = sphere->getPosition() - (collisionNormal * -sphere->getRadius());
 		float sphereToPlane = glm::dot(sphere->getPosition(), plane->getNormal()) - plane->getDistance();
 
 		float intersection = sphere->getRadius() - sphereToPlane;

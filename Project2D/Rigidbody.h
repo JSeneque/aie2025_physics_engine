@@ -8,7 +8,7 @@ public:
 	~Rigidbody();
 
 	virtual void fixedUpdate(glm::vec2 gravity, float timeStep);
-	void applyForce(glm::vec2 force, glm::vec2 pos);
+	void applyForce(glm::vec2 force, glm::vec2 pos = glm::vec2(0, 0));
 	//void applyForceToActor(Rigidbody* actor2, glm::vec2 force);
 
 	glm::vec2 getPosition() const;

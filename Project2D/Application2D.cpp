@@ -5,6 +5,7 @@
 #include "Gizmos.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Box.h"
 #include "glm\ext.hpp"
 #include <iostream>
 
@@ -28,14 +29,17 @@ bool Application2D::startup() {
 	m_physicsScene->setTimeStep(0.01f);
 
 	Sphere* ball1 = new Sphere(glm::vec2(0, 20), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
-	Sphere* ball2 = new Sphere(glm::vec2(15, -2), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
-	Plane* plane = new Plane(glm::vec2(0, 1), -30);
-	Plane* plane2 = new Plane(glm::vec2(0.3, 1), -30);
-	Plane* plane3 = new Plane(glm::vec2(0.3, 1), -30);
+	Sphere* ball2 = new Sphere(glm::vec2(5, -2), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Plane* plane1 = new Plane(glm::vec2(0, 1), -50);		// vertical
+	Plane* plane2 = new Plane(glm::vec2(1, 0), -5);			// horizontal
+	Plane* plane3 = new Plane(glm::vec2(-0.707, 0.707), -40);	
+	Box* box1 = new Box(glm::vec2(0, 20), glm::vec2(0), 4.0f, glm::vec2(2,4), glm::vec4(1, 1, 0, 1),
 
 	m_physicsScene->addActor(ball1);
 	m_physicsScene->addActor(ball2);
-	m_physicsScene->addActor(plane);
+	m_physicsScene->addActor(plane1);
+	m_physicsScene->addActor(plane2);
+	m_physicsScene->addActor(plane3);
 
 	return true;
 }

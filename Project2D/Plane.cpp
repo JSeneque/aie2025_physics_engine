@@ -72,5 +72,14 @@ void Plane::resolveCollision(Rigidbody* actor2, glm::vec2 contact)
 
     float deltaKE = kePost - kePre;
     if (deltaKE > kePost * 0.01f)
-        std::cout << "Kinetic Energy discrepancy greater than 1% detected!!";
+        std::cout << "Kinetic Energy discrepancy greater than 1% detected!!\n";
+
+    //// the plane is not moving, so the relative velocity is just the other's velocity
+    //glm::vec2 relativeVelocity = actor2->getVelocity();
+    //float elasticity = actor2->getElasticity();
+    //float j = glm::dot(-(1 + elasticity) * (relativeVelocity), m_normal) / (1 / actor2->getMass());
+
+    //glm::vec2 force = m_normal * j;
+
+    //actor2->applyForce(force, contact - actor2->getPosition());
 }

@@ -16,10 +16,10 @@ void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
 {
     // move to new position
     m_position += getVelocity() * timeStep;
+    // apply gravity
+    applyForce(gravity * getMass() * timeStep);
     // update rotation according to the angular velocty
     m_orientation += m_angularVelocity * timeStep;
-    // apply gravity
-    applyForce(gravity * getMass() * timeStep, getPosition());
 
 }
 
@@ -29,16 +29,6 @@ void Rigidbody::applyForce(glm::vec2 force, glm::vec2 pos)
     m_velocity += force / getMass();
     m_angularVelocity += (force.y * pos.x - force.x * pos.y) / getMoment();
 }
-
-//void Rigidbody::applyForceToActor(Rigidbody* actor2, glm::vec2 force)
-//{
-//    // first check that we actor2 exists
-//    if (actor2 != nullptr) {
-//        actor2->applyForce(force);
-//        //apply a negative force against this object
-//        this->applyForce(-force);
-//    }
-//}
 
 glm::vec2 Rigidbody::getPosition() const
 {
@@ -90,6 +80,8 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
         other->getPosition() - this->m_position);
     // get the vector perpendicular to the collision normal
     glm::vec2 perp(normal.y, -normal.x);
+
+    printf("Collision Normal: %d, Contact Point: %d", collisionNormal, contact);
 
     // determine the total velocity of the contact points for the two objects,
     // for both linear and rotational
