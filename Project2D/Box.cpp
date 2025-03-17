@@ -1,14 +1,16 @@
 #include "Box.h"
 #include "Gizmos.h"
 
-Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extents, glm::vec4 colour, glm::vec2 localX, glm::vec2 localY):
-	Rigidbody(ShapeType::SPHERE, position, velocity, 0.0f, mass, 0.0f, 0.0f, 1.0f)
+Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extents, glm::vec4 colour
+	, float orientation):
+	Rigidbody(ShapeType::BOX, position, velocity, orientation, mass, 0.0f, 0.0f, 1.0f)
 	, m_extents {extents}
 	, m_colour {colour}
-	, m_localX {localX}
-	, m_localY{localY}
 {
-
+	float cs = cosf(m_orientation);
+	float sn = sinf(m_orientation);
+	m_localX = glm::normalize(glm::vec2(cs, sn));
+	m_localY = glm::normalize(glm::vec2(-sn, cs));
 }
 
 Box::~Box()

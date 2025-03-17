@@ -33,13 +33,14 @@ bool Application2D::startup() {
 	Plane* plane1 = new Plane(glm::vec2(0, 1), -50);		// vertical
 	Plane* plane2 = new Plane(glm::vec2(1, 0), -5);			// horizontal
 	Plane* plane3 = new Plane(glm::vec2(-0.707, 0.707), -40);	
-	Box* box1 = new Box(glm::vec2(0, 20), glm::vec2(0), 4.0f, glm::vec2(2,4), glm::vec4(1, 1, 0, 1),
+	Box* box1 = new Box(glm::vec2(0, 20), glm::vec2(0), 4.0f, glm::vec2(2, 4), glm::vec4(1, 1, 0, 1), 0);
 
-	m_physicsScene->addActor(ball1);
-	m_physicsScene->addActor(ball2);
+	//m_physicsScene->addActor(ball1);
+	//m_physicsScene->addActor(ball2);
 	m_physicsScene->addActor(plane1);
-	m_physicsScene->addActor(plane2);
-	m_physicsScene->addActor(plane3);
+	//m_physicsScene->addActor(plane2);
+	//m_physicsScene->addActor(plane3);
+	m_physicsScene->addActor(box1);
 
 	return true;
 }
