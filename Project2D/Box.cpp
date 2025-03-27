@@ -3,7 +3,7 @@
 
 Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extents, glm::vec4 colour
 	, float orientation):
-	Rigidbody(ShapeType::BOX, position, velocity, orientation, mass, 0.0f, 0.0f, 1.0f)
+	Rigidbody(ShapeType::BOX, position, velocity, orientation, mass, 0.0f, 1.0f)
 	, m_extents {extents}
 	, m_colour {colour}
 {
@@ -11,6 +11,7 @@ Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extents, 
 	float sn = sinf(m_orientation);
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
+	m_moment = ( 1 / 12) * m_mass * getWidth() * getHeight();
 }
 
 Box::~Box()

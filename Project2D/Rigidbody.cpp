@@ -2,7 +2,7 @@
 #include <iostream> 
 
 Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass,
-    float angularVelocity, float moment, float elasticity)
+    float angularVelocity, float elasticity)
     : PhysicsObject(shapeID), m_position (position), m_velocity (velocity), m_orientation (orientation), m_mass (mass),
     m_angularVelocity (angularVelocity), m_elasticity (elasticity)
 {
@@ -19,6 +19,7 @@ void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
     // apply gravity
     applyForce(gravity * getMass() * timeStep);
     // update rotation according to the angular velocty
+
     m_orientation += m_angularVelocity * timeStep;
 
 }
@@ -81,7 +82,7 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
     // get the vector perpendicular to the collision normal
     glm::vec2 perp(normal.y, -normal.x);
 
-    printf("Collision Normal: %d, Contact Point: %d", collisionNormal, contact);
+    //printf("Collision Normal: %d, Contact Point: %d", collisionNormal, contact);
 
     // determine the total velocity of the contact points for the two objects,
     // for both linear and rotational
