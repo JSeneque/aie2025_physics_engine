@@ -36,12 +36,17 @@ bool Application2D::startup() {
 	Box* box1 = new Box(glm::vec2(5, 1), glm::vec2(0), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0);
 	Box* box2 = new Box(glm::vec2(0, 10), glm::vec2(0), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0);
 
+	ball1->SetLinearDrag(0.1f);
+	ball2->SetLinearDrag(0.1f);
+	ball1->SetAngularDrag(0.1f);
+	ball2->SetAngularDrag(0.1f);
+
 	m_physicsScene->addActor(ball1);
-	//m_physicsScene->addActor(ball2);
+	m_physicsScene->addActor(ball2);
 	m_physicsScene->addActor(plane1);
 	//m_physicsScene->addActor(plane2);
 	//m_physicsScene->addActor(plane3);
-	m_physicsScene->addActor(box1);
+	//m_physicsScene->addActor(box1);
 	//m_physicsScene->addActor(box2);
 
 	return true;

@@ -1,5 +1,9 @@
 #pragma once
 #include "PhysicsObject.h"
+
+#define MIN_LINEAR_THRESHOLD 0.3
+#define MIN_ANGULAR_THRESHOLD 0.3
+
 class Rigidbody : public PhysicsObject
 {
 public:
@@ -20,6 +24,10 @@ public:
 	float getAngularVelocity() const;
 
 	void resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal = nullptr);
+	float GetLinearDrag() const;
+	float GetAngularDrag() const;
+	void SetLinearDrag(float linearDrag);
+	void SetAngularDrag(float angularDrag);
 
 public:
 	float getKineticEnergy();
@@ -35,5 +43,7 @@ protected:
 	// moment of inertia
 	float m_moment;	
 	float m_elasticity;
+	float m_linearDrag;
+	float m_angularDrag;
 };
 

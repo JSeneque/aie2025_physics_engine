@@ -1,5 +1,6 @@
 #include "Box.h"
 #include "Gizmos.h"
+#include <iostream>
 
 Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extents, glm::vec4 colour
 	, float orientation):
@@ -26,6 +27,8 @@ void Box::fixedUpdate(glm::vec2 gravity, float timeStep)
 	float sn = sinf(m_orientation);
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
+
+	
 }
 
 void Box::draw()

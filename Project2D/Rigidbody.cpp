@@ -13,14 +13,22 @@ Rigidbody::~Rigidbody()
 }
 
 void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
-{
+{    
     // move to new position
-    m_position += getVelocity() * timeStep;
+    m_position += getVelocity() * m_linearDrag * timeStep;
     // apply gravity
-    applyForce(gravity * getMass() * timeStep);
+    applyForce(gravity * getMass() * m_angularDrag * timeStep);
     // update rotation according to the angular velocty
 
     m_orientation += m_angularVelocity * timeStep;
+    
+    if (length(m_velocity) < MIN_LINEAR_THRESHOLD) {
+        m_velocity = glm::vec2(0, 0);
+    }
+    if (abs(m_angularVelocity) < MIN_ANGULAR_THRESHOLD) {
+        m_angularVelocity = 0;
+    }
+    
 
 }
 
@@ -112,6 +120,26 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
         applyForce(-force, contact - m_position);
         other->applyForce(force, contact - other->getPosition());
     }
+}
+
+float Rigidbody::GetLinearDrag() const
+{
+    return m_linearDrag;
+}
+
+float Rigidbody::GetAngularDrag() const
+{
+    return m_angularDrag;
+}
+
+void Rigidbody::SetLinearDrag(float linearDrag)
+{
+    m_linearDrag = linearDrag;
+}
+
+void Rigidbody::SetAngularDrag(float angularDrag)
+{
+    m_angularDrag = angularDrag;
 }
 
 
