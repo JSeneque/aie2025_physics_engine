@@ -1,8 +1,9 @@
 #pragma once
 #include "PhysicsObject.h"
 
-#define MIN_LINEAR_THRESHOLD 0.3
-#define MIN_ANGULAR_THRESHOLD 0.3
+#define MIN_LINEAR_THRESHOLD 1
+#define MIN_ANGULAR_THRESHOLD 1
+
 
 class Rigidbody : public PhysicsObject
 {
