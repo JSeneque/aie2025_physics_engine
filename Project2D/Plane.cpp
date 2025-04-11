@@ -1,14 +1,14 @@
 #include "Plane.h"
 #include "Gizmos.h"
 #include "Rigidbody.h"
+#include <iostream>
 
-
-Plane::Plane() : PhysicsObject(ShapeType::PLANE), m_distanceToOrigin{ 0 }, m_normal {glm::vec2(0,1)}
+Plane::Plane() : PhysicsObject(ShapeType::PLANE, 1), m_distanceToOrigin{ 0 }, m_normal {glm::vec2(0,1)}
 {
 }
 
-Plane::Plane(glm::vec2 normal, float distance) :
-	PhysicsObject(ShapeType::PLANE), m_normal{normal}, m_distanceToOrigin{distance}, m_colour {glm::vec4(0,0,1,1)}
+Plane::Plane(glm::vec2 normal, float distance, float elasticity) :
+	PhysicsObject(ShapeType::PLANE, elasticity ), m_normal{normal}, m_distanceToOrigin{distance}, m_colour {glm::vec4(0,0,1,1)}
 {
 }
 
@@ -47,15 +47,38 @@ float Plane::getDistance()
 	return m_distanceToOrigin;
 }
 
-//void Plane::resolveCollision(Rigidbody* other) )
-void Plane::resolveCollision(Rigidbody* other, glm::vec2 contact)
+void Plane::resolveCollision(Rigidbody* actor2, glm::vec2 contact)
 {
-    // the plane is not moving, so the relative velocity is just the other's velocity
-    glm::vec2 relativeVelocity = other->getVelocity();
-    float elasticity = other->getElasticity();
-    float j = glm::dot(-(1 + elasticity) * (relativeVelocity), m_normal) / (1 / other->getMass());
-
+    // the position at which we'll apply the force relative to the object's COM
+    glm::vec2 localContact = contact - actor2->getPosition();
+    // the plane isn't moving, so the relative velocity is just actor2's velocity
+    //at the contact point
+     glm::vec2 vRel = actor2->getVelocity() + actor2->getAngularVelocity() * glm::vec2(-localContact.y, localContact.x);
+    float velocityIntoPlane = glm::dot(vRel, m_normal);
+    // perfectly elasticity collisions for now
+    //float e = 1;
+    float e = (GetElasticity() + actor2->getElasticity());
+    // this is the perpendicular distance we apply the force at relative to the
+    // COM, so Torque = F * r
+    float r = glm::dot(localContact, glm::vec2(m_normal.y, -m_normal.x));
+    // work out the "effective mass" - this is a combination of moment of
+    // inertia and mass, and tells us how much the contact point velocity
+    // will change with the force we're applying
+    float mass0 = 1.0f / (1.0f / actor2->getMass() + (r * r) / actor2 -> getMoment());
+    float j = -(1 + e) * velocityIntoPlane * mass0;
     glm::vec2 force = m_normal * j;
+    float kePre = actor2->getKineticEnergy();
+    actor2->applyForce(force, contact - actor2->getPosition());
+    float kePost = actor2->getKineticEnergy();
 
-    other->applyForce(force, contact - other->getPosition());
+    float deltaKE = kePost - kePre;
+    if (deltaKE > kePost * 0.01f)
+        std::cout << "Kinetic Energy discrepancy greater than 1% detected!!\n";
+
+
+}
+
+float Plane::GetElasticity() const
+{
+    return m_elasticity;
 }

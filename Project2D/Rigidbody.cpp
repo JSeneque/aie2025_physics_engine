@@ -2,9 +2,9 @@
 #include <iostream> 
 
 Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass,
-    float angularVelocity, float moment, float elasticity)
-    : PhysicsObject(shapeID), m_position (position), m_velocity (velocity), m_orientation (orientation), m_mass (mass),
-    m_angularVelocity (angularVelocity), m_elasticity (elasticity)
+    float angularVelocity, float elasticity)
+    : PhysicsObject(shapeID, elasticity), m_position (position), m_velocity (velocity), m_orientation (orientation), m_mass (mass),
+    m_angularVelocity (angularVelocity)//, m_elasticity (elasticity)
 {
 }
 
@@ -14,12 +14,28 @@ Rigidbody::~Rigidbody()
 
 void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
 {
+    m_velocity -= getVelocity() * m_linearDrag * timeStep;
+    m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
+
+    if (length(m_velocity) < MIN_LINEAR_THRESHOLD) {
+        m_velocity = glm::vec2(0, 0);
+    }
+    if (abs(m_angularVelocity) < MIN_ANGULAR_THRESHOLD)
+    {
+        m_angularVelocity = 0;
+    }
+    
     // move to new position
-    m_position += getVelocity() * timeStep;
+    m_position += getVelocity()  * timeStep;
+    
     // apply gravity
-    applyForce(gravity * getMass() * timeStep, getPosition());
+    applyForce(gravity * getMass() *  timeStep);
+
     // update rotation according to the angular velocty
     m_orientation += m_angularVelocity * timeStep;
+    //m_orientation += m_angularVelocity * m_angularDrag* timeStep;
+
+
 }
 
 void Rigidbody::applyForce(glm::vec2 force, glm::vec2 pos)
@@ -28,16 +44,6 @@ void Rigidbody::applyForce(glm::vec2 force, glm::vec2 pos)
     m_velocity += force / getMass();
     m_angularVelocity += (force.y * pos.x - force.x * pos.y) / getMoment();
 }
-
-//void Rigidbody::applyForceToActor(Rigidbody* actor2, glm::vec2 force)
-//{
-//    // first check that we actor2 exists
-//    if (actor2 != nullptr) {
-//        actor2->applyForce(force);
-//        //apply a negative force against this object
-//        this->applyForce(-force);
-//    }
-//}
 
 glm::vec2 Rigidbody::getPosition() const
 {
@@ -76,15 +82,10 @@ float Rigidbody::getAngularVelocity() const
 
 float Rigidbody::getKineticEnergy()
 {
-    // Retrieve the object's mass
-    float mass = getMass();
-    // Retrieve the object's velocity
-    glm::vec2 velocity = getVelocity();
-
-    float speedSquared = glm::dot(velocity, velocity); // Equivalent to v^2
-
-    return 0.5f * mass * speedSquared;
+    return 0.5f * (m_mass * glm::dot(m_velocity, m_velocity) +
+        m_moment * m_angularVelocity * m_angularVelocity);
 }
+
 
 void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal)
 {
@@ -95,8 +96,7 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
     // get the vector perpendicular to the collision normal
     glm::vec2 perp(normal.y, -normal.x);
 
-    // determine the total velocity of the contact points for the two objects,
-    // for both linear and rotational
+    float elasticity = (getElasticity() + other->getElasticity()) / 2;
 
     // r is the radius from axis to application of force
     float r1 = glm::dot(contact - m_position, -perp);
@@ -114,7 +114,7 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
         float mass1 = 1.0f / (1.0f / m_mass + (r1 * r1) / m_moment);
         float mass2 = 1.0f / (1.0f / other->getMass() + (r2 * r2) / other->getMoment());
 
-        float elasticity = 1;
+        //float elasticity = 1;
 
         glm::vec2 force = (1.0f + elasticity) * mass1 * mass2 /
             (mass1 + mass2) * (v1 - v2) * normal;
@@ -123,6 +123,26 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
         applyForce(-force, contact - m_position);
         other->applyForce(force, contact - other->getPosition());
     }
+}
+
+float Rigidbody::GetLinearDrag() const
+{
+    return m_linearDrag;
+}
+
+float Rigidbody::GetAngularDrag() const
+{
+    return m_angularDrag;
+}
+
+void Rigidbody::SetLinearDrag(float linearDrag)
+{
+    m_linearDrag = linearDrag;
+}
+
+void Rigidbody::SetAngularDrag(float angularDrag)
+{
+    m_angularDrag = angularDrag;
 }
 
 
