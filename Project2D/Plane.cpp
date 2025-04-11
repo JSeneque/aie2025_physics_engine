@@ -3,12 +3,12 @@
 #include "Rigidbody.h"
 #include <iostream>
 
-Plane::Plane() : PhysicsObject(ShapeType::PLANE), m_distanceToOrigin{ 0 }, m_normal {glm::vec2(0,1)}
+Plane::Plane() : PhysicsObject(ShapeType::PLANE, 1), m_distanceToOrigin{ 0 }, m_normal {glm::vec2(0,1)}
 {
 }
 
-Plane::Plane(glm::vec2 normal, float distance) :
-	PhysicsObject(ShapeType::PLANE), m_normal{normal}, m_distanceToOrigin{distance}, m_colour {glm::vec4(0,0,1,1)}
+Plane::Plane(glm::vec2 normal, float distance, float elasticity) :
+	PhysicsObject(ShapeType::PLANE, elasticity ), m_normal{normal}, m_distanceToOrigin{distance}, m_colour {glm::vec4(0,0,1,1)}
 {
 }
 
@@ -56,7 +56,8 @@ void Plane::resolveCollision(Rigidbody* actor2, glm::vec2 contact)
      glm::vec2 vRel = actor2->getVelocity() + actor2->getAngularVelocity() * glm::vec2(-localContact.y, localContact.x);
     float velocityIntoPlane = glm::dot(vRel, m_normal);
     // perfectly elasticity collisions for now
-    float e = 1;
+    //float e = 1;
+    float e = (GetElasticity() + actor2->getElasticity());
     // this is the perpendicular distance we apply the force at relative to the
     // COM, so Torque = F * r
     float r = glm::dot(localContact, glm::vec2(m_normal.y, -m_normal.x));
@@ -74,12 +75,10 @@ void Plane::resolveCollision(Rigidbody* actor2, glm::vec2 contact)
     if (deltaKE > kePost * 0.01f)
         std::cout << "Kinetic Energy discrepancy greater than 1% detected!!\n";
 
-    //// the plane is not moving, so the relative velocity is just the other's velocity
-    //glm::vec2 relativeVelocity = actor2->getVelocity();
-    //float elasticity = actor2->getElasticity();
-    //float j = glm::dot(-(1 + elasticity) * (relativeVelocity), m_normal) / (1 / actor2->getMass());
 
-    //glm::vec2 force = m_normal * j;
+}
 
-    //actor2->applyForce(force, contact - actor2->getPosition());
+float Plane::GetElasticity() const
+{
+    return m_elasticity;
 }

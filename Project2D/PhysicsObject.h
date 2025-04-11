@@ -10,7 +10,7 @@ enum ShapeType {
 class PhysicsObject
 {
 public:
-	PhysicsObject(ShapeType shapeID) : m_shapeID( shapeID ) {}
+	PhysicsObject(ShapeType shapeID, float elasticity) : m_shapeID( shapeID ) , m_elasticity( elasticity ) {}
 
 
 	virtual void fixedUpdate(glm::vec2 gravity, float timeStep) = 0;
@@ -20,5 +20,6 @@ public:
 
 protected:
 	ShapeType m_shapeID;
+	float m_elasticity;
 };
 

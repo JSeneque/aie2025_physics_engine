@@ -3,8 +3,8 @@
 #include <iostream>
 
 Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extents, glm::vec4 colour
-	, float orientation):
-	Rigidbody(ShapeType::BOX, position, velocity, orientation, mass, 0.0f, 1.0f)
+	, float orientation, float elasticity):
+	Rigidbody(ShapeType::BOX, position, velocity, orientation, mass, 0.0f, elasticity)
 	, m_extents {extents}
 	, m_colour {colour}
 {
