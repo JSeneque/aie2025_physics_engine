@@ -33,8 +33,8 @@ bool Application2D::startup() {
 	Plane* plane1 = new Plane(glm::vec2(0, 1), -25, 0.1f);		// vertical
 	Plane* plane2 = new Plane(glm::vec2(1, 0), -5, 0.1f);			// horizontal
 	Plane* plane3 = new Plane(glm::vec2(-0.707, 0.707), -40, 0.1f);	
-	Box* box1 = new Box(glm::vec2(5, 1), glm::vec2(0), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0, 0.8f);
-	Box* box2 = new Box(glm::vec2(0, 10), glm::vec2(0), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0, 0.8f);
+	Box* box1 = new Box(glm::vec2(2, 10), glm::vec2(0, 1), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 45, 0.8f);
+	//Box* box2 = new Box(glm::vec2(0, 10), glm::vec2(0, 1), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0, 0.8f);
 
 	ball1->SetLinearDrag(0.3f);
 	ball2->SetLinearDrag(0.3f);
@@ -46,7 +46,7 @@ bool Application2D::startup() {
 	m_physicsScene->addActor(plane1);
 	m_physicsScene->addActor(plane2);
 	m_physicsScene->addActor(plane3);
-	//m_physicsScene->addActor(box1);
+	m_physicsScene->addActor(box1);
 	//m_physicsScene->addActor(box2);
 
 	return true;

@@ -12,7 +12,7 @@ Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extents, 
 	float sn = sinf(m_orientation);
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
-	m_moment = ( 1 / 12) * m_mass * getWidth() * getHeight();
+	m_moment = ( 1.0f / 12.0f) * m_mass * getWidth() * getHeight();
 }
 
 Box::~Box()
@@ -27,8 +27,6 @@ void Box::fixedUpdate(glm::vec2 gravity, float timeStep)
 	float sn = sinf(m_orientation);
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
-
-	
 }
 
 void Box::draw()

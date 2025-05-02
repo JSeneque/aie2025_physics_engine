@@ -4,8 +4,9 @@
 Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass,
     float angularVelocity, float elasticity)
     : PhysicsObject(shapeID, elasticity), m_position (position), m_velocity (velocity), m_orientation (orientation), m_mass (mass),
-    m_angularVelocity (angularVelocity)//, m_elasticity (elasticity)
+    m_angularVelocity (angularVelocity), m_linearDrag{0.3f}, m_angularDrag{0.3f}
 {
+    
 }
 
 Rigidbody::~Rigidbody()
