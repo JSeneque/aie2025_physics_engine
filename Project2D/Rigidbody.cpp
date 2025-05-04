@@ -15,7 +15,7 @@ Rigidbody::~Rigidbody()
 
 void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
 {
-    m_velocity -= getVelocity() * m_linearDrag * timeStep;
+    m_velocity -= m_velocity * m_linearDrag * timeStep;
     m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
 
     if (length(m_velocity) < MIN_LINEAR_THRESHOLD) {
@@ -97,7 +97,7 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
     // get the vector perpendicular to the collision normal
     glm::vec2 perp(normal.y, -normal.x);
 
-    float elasticity = (getElasticity() + other->getElasticity()) / 2;
+    float elasticity = (getElasticity() + other->getElasticity()) / 2.0f;
 
     // r is the radius from axis to application of force
     float r1 = glm::dot(contact - m_position, -perp);

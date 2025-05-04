@@ -27,6 +27,8 @@ void Box::fixedUpdate(glm::vec2 gravity, float timeStep)
 	float sn = sinf(m_orientation);
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
+
+	
 }
 
 void Box::draw()
@@ -66,7 +68,7 @@ glm::vec2 Box::getLocalX() const
 
 glm::vec2 Box::getLocalY() const
 {
-	return m_localX;
+	return m_localY;
 }
 
 bool Box::checkBoxCorners(const Box& box, glm::vec2& contact, int& numContacts,

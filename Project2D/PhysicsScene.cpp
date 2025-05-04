@@ -202,8 +202,10 @@ bool PhysicsScene::plane2Box(PhysicsObject* obj1, PhysicsObject* obj2)
 		int numContacts = 0;
 		glm::vec2 contact(0, 0);
 		float contactV = 0;
+		
 		// get a representative point on the plane
 		glm::vec2 planeOrigin = plane->getNormal() * plane->getDistance();
+		
 		// check all four corners to see if we've hit the plane
 		for (float x = -box->getExtents().x; x < box->getWidth(); x += box->getWidth())
 		{
@@ -212,11 +214,14 @@ bool PhysicsScene::plane2Box(PhysicsObject* obj1, PhysicsObject* obj2)
 				// get the position of the corner in world space
 				glm::vec2 p = box->getPosition() + x * box->getLocalX() + y * box->getLocalY();
 				float distFromPlane = glm::dot(p - planeOrigin, plane->getNormal());
+		
 				// this is the total velocity of the point in world space
 				glm::vec2 displacement = x * box->getLocalX() + y * box->getLocalY();
 				glm::vec2 pointVelocity = box->getVelocity() + box->getAngularVelocity() * glm::vec2(-displacement.y, displacement.x);
+				
 				// and this is the component of the point velocity into the plane
 				float velocityIntoPlane = glm::dot(pointVelocity, plane->getNormal());
+				
 				// and moving further in, we need to resolve the collision
 				if (distFromPlane < 0 && velocityIntoPlane <= 0)
 				{

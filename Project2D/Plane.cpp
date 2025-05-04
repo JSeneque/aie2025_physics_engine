@@ -64,18 +64,22 @@ void Plane::resolveCollision(Rigidbody* actor2, glm::vec2 contact)
     // work out the "effective mass" - this is a combination of moment of
     // inertia and mass, and tells us how much the contact point velocity
     // will change with the force we're applying
-    float mass0 = 1.0f / (1.0f / actor2->getMass() + (r * r) / actor2 -> getMoment());
+    float mass0 = 1.0f / (1.0f / actor2->getMass() + (r * r) / actor2->getMoment());
+    
     float j = -(1 + e) * velocityIntoPlane * mass0;
+    
     glm::vec2 force = m_normal * j;
+    
     float kePre = actor2->getKineticEnergy();
+    
     actor2->applyForce(force, contact - actor2->getPosition());
+    
     float kePost = actor2->getKineticEnergy();
 
     float deltaKE = kePost - kePre;
+    
     if (deltaKE > kePost * 0.01f)
         std::cout << "Kinetic Energy discrepancy greater than 1% detected!!\n";
-
-
 }
 
 float Plane::GetElasticity() const
