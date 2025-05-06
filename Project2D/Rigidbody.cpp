@@ -1,5 +1,6 @@
 #include "Rigidbody.h"
-#include <iostream> 
+#include <iostream>
+#include "PhysicsScene.h"
 
 Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass,
     float angularVelocity, float elasticity)
@@ -87,8 +88,13 @@ float Rigidbody::getKineticEnergy()
         m_moment * m_angularVelocity * m_angularVelocity);
 }
 
+void Rigidbody::SetPosition(glm::vec2 position)
+{
+    m_position = position;
+}
 
-void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal)
+
+void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal, float pen)
 {
     // find the vector between their centres, or use the provided direction
     // of force, and make sure its normalised
@@ -124,6 +130,8 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
         applyForce(-force, contact - m_position);
         other->applyForce(force, contact - other->getPosition());
     }
+    if (pen > 0)
+        PhysicsScene::ApplyContactForces(this, other, normal, pen);
 }
 
 float Rigidbody::GetLinearDrag() const

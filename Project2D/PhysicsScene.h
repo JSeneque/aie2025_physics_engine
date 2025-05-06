@@ -2,6 +2,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "Rigidbody.h"
+
 class PhysicsObject;
 
 #define SHAPE_COUNT 3
@@ -32,6 +34,8 @@ public:
 	static bool box2Plane(PhysicsObject*, PhysicsObject*);
 	static bool box2Sphere(PhysicsObject*, PhysicsObject*);
 	static bool box2Box(PhysicsObject*, PhysicsObject*);
+
+	static void  ApplyContactForces(Rigidbody* body1, Rigidbody* body2, glm::vec2 norm, float pen);
 
 protected:
 	glm::vec2 m_gravity;

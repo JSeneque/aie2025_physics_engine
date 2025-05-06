@@ -127,13 +127,17 @@ bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 		// TODO do the necessary maths in here
 		// compare the distance between their centres and if smaller than the sum of their radius,
 		// then they have collided
-		if (glm::distance(sphere1->getPosition(), sphere2->getPosition()) 
-			< (sphere1->getRadius() + sphere2->getRadius()))
+		float distance = glm::distance(sphere1->getPosition(), sphere2->getPosition());
+		
+		if (distance < (sphere1->getRadius() + sphere2->getRadius()))
 		{
 			// TODO if the spheres touch, set their velocities to zero for now
-			//sphere1->setVelocity(glm::vec2(0, 0));
-			//sphere2->setVelocity(glm::vec2(0, 0));
-			sphere1->resolveCollision(sphere2, 0.5f * (sphere1->getPosition() + sphere2->getPosition()));
+			float penetration = sphere1->getRadius() + sphere2->getRadius() - distance;
+			if (penetration > 0.0f)
+			{
+				sphere1->resolveCollision(sphere2, 0.5f * (sphere1->getPosition() + sphere2->getPosition()), nullptr, penetration);
+				return true;
+			}
 			//sphere2->resolveCollision(sphere1);
 		}
 		
@@ -251,26 +255,33 @@ bool PhysicsScene::box2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 		// transform the circle into the box's coordinate space
 		glm::vec2 circlePosWorld = sphere->getPosition() - box->getPosition();
 		glm::vec2 circlePosBox = glm::vec2(glm::dot(circlePosWorld, box -> getLocalX()), glm::dot(circlePosWorld, box->getLocalY()));
-			// find the closest point to the circle centre on the box by clamping the
-			//coordinates in box - space to the box's extents
-				glm::vec2 closestPointOnBoxBox = circlePosBox;
-			glm::vec2 extents = box->getExtents();
-			if (closestPointOnBoxBox.x < -extents.x) closestPointOnBoxBox.x = -
-				extents.x;
-			if (closestPointOnBoxBox.x > extents.x) closestPointOnBoxBox.x = extents.x;
-			if (closestPointOnBoxBox.y < -extents.y) closestPointOnBoxBox.y = -
-				extents.y;
-			if (closestPointOnBoxBox.y > extents.y) closestPointOnBoxBox.y = extents.y;
-			// and convert back into world coordinates
-			glm::vec2 closestPointOnBoxWorld = box->getPosition() + closestPointOnBoxBox.x *
-				box->getLocalX() + closestPointOnBoxBox.y * box->getLocalY();
-			glm::vec2 circleToBox = sphere->getPosition() - closestPointOnBoxWorld;
-			if (glm::length(circleToBox) < sphere->getRadius())
-			{
-				glm::vec2 direction = glm::normalize(circleToBox);
-				glm::vec2 contact = closestPointOnBoxWorld;
-				box->resolveCollision(sphere, contact, &direction);
-			}
+		// find the closest point to the circle centre on the box by clamping the
+		//coordinates in box - space to the box's extents
+		glm::vec2 closestPointOnBoxBox = circlePosBox;
+		glm::vec2 extents = box->getExtents();
+		if (closestPointOnBoxBox.x < -extents.x) closestPointOnBoxBox.x = -
+			extents.x;
+		if (closestPointOnBoxBox.x > extents.x) closestPointOnBoxBox.x = extents.x;
+		if (closestPointOnBoxBox.y < -extents.y) closestPointOnBoxBox.y = -
+			extents.y;
+		if (closestPointOnBoxBox.y > extents.y) closestPointOnBoxBox.y = extents.y;
+		// and convert back into world coordinates
+		glm::vec2 closestPointOnBoxWorld = box->getPosition() + closestPointOnBoxBox.x *
+			box->getLocalX() + closestPointOnBoxBox.y * box->getLocalY();
+		glm::vec2 circleToBox = sphere->getPosition() - closestPointOnBoxWorld;
+		if (glm::length(circleToBox) < sphere->getRadius())
+		{
+			glm::vec2 direction = glm::normalize(circleToBox);
+			glm::vec2 contact = closestPointOnBoxWorld;
+			box->resolveCollision(sphere, contact, &direction);
+		}
+		float penetration = sphere->getRadius() - glm::length(circleToBox);
+		if (penetration > 0)
+		{
+			glm::vec2 direction = glm::normalize(circleToBox);
+			glm::vec2 contact = closestPointOnBoxWorld;
+			box->resolveCollision(sphere, contact, &direction, penetration);
+		}
 	}
 	return false;
 }
@@ -294,6 +305,15 @@ bool PhysicsScene::box2Box(PhysicsObject* obj1, PhysicsObject* obj2) {
 		return true;
 	}
 	return false;
+}
+
+void PhysicsScene::ApplyContactForces(Rigidbody* body1, Rigidbody* body2, glm::vec2 norm, float pen)
+{
+	float body2Mass = body2 ? body2->getMass() : INT_MAX;
+	float body1Factor = body2Mass / (body1->getMass() + body2Mass);
+	body1->SetPosition(body1->getPosition() - body1Factor * norm * pen);
+	if (body2)
+		body2->SetPosition(body2->getPosition() + (1 - body1Factor) * norm * pen);
 }
 
 

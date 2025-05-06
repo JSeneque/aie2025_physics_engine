@@ -24,12 +24,13 @@ public:
 	float getElasticity() const;
 	float getAngularVelocity() const;
 
-	void resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal = nullptr);
+	void resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal = nullptr, float pen = 0);
 	float GetLinearDrag() const;
 	float GetAngularDrag() const;
 	void SetLinearDrag(float linearDrag);
 	void SetAngularDrag(float angularDrag);
 	float getKineticEnergy();
+	void SetPosition(glm::vec2 position);
 
 
 protected:
