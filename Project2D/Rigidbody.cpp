@@ -5,7 +5,7 @@
 Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass,
     float angularVelocity, float elasticity)
     : PhysicsObject(shapeID, elasticity), m_position (position), m_velocity (velocity), m_orientation (orientation), m_mass (mass),
-    m_angularVelocity (angularVelocity), m_linearDrag{0.3f}, m_angularDrag{0.3f}
+    m_angularVelocity (angularVelocity), m_linearDrag{0.3f}, m_angularDrag{0.3f}, m_isKinematic{false}
 {
     
 }
@@ -16,6 +16,14 @@ Rigidbody::~Rigidbody()
 
 void Rigidbody::fixedUpdate(glm::vec2 gravity, float timeStep)
 {
+    if (m_isKinematic)
+    {
+        m_velocity += glm::vec2(0);
+        m_angularVelocity = 0;
+        return;    
+    }
+        
+    
     m_velocity -= m_velocity * m_linearDrag * timeStep;
     m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
 
@@ -64,12 +72,12 @@ glm::vec2 Rigidbody::getVelocity() const
 
 float Rigidbody::getMass() const
 {
-    return m_mass;
+    return m_isKinematic ? INT_MAX : m_mass;
 }
 
 float Rigidbody::getMoment() const
 {
-    return m_moment;
+    return m_isKinematic ? INT_MAX : m_moment;
 }
 
 float Rigidbody::getElasticity() const
@@ -84,8 +92,8 @@ float Rigidbody::getAngularVelocity() const
 
 float Rigidbody::getKineticEnergy()
 {
-    return 0.5f * (m_mass * glm::dot(m_velocity, m_velocity) +
-        m_moment * m_angularVelocity * m_angularVelocity);
+    return 0.5f * (getMass() * glm::dot(m_velocity, m_velocity) +
+        getMoment() * m_angularVelocity * m_angularVelocity);
 }
 
 void Rigidbody::SetPosition(glm::vec2 position)
@@ -118,7 +126,7 @@ void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2*
     {
         // calculate the effective mass at contact point for each object
         // this is how much the contact point will move due to the force applied
-        float mass1 = 1.0f / (1.0f / m_mass + (r1 * r1) / m_moment);
+        float mass1 = 1.0f / (1.0f / getMass() + (r1 * r1) / getMoment());
         float mass2 = 1.0f / (1.0f / other->getMass() + (r2 * r2) / other->getMoment());
 
         //float elasticity = 1;

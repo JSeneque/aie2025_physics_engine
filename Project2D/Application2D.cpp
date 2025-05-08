@@ -28,13 +28,15 @@ bool Application2D::startup() {
 	m_physicsScene->setGravity(glm::vec2(0.0f, -9.82f));
 	m_physicsScene->setTimeStep(0.01f);
 
-	Sphere* ball1 = new Sphere(glm::vec2(7, 25), glm::vec2(0,1), 4.0f, 4, glm::vec4(1, 0, 0, 1), 0.8f);
+	Sphere* ball1 = new Sphere(glm::vec2(9, 25), glm::vec2(0,1), 4.0f, 4, glm::vec4(1, 0, 0, 1), 0.8f);
 	Sphere* ball2 = new Sphere(glm::vec2(5, 40), glm::vec2(10,1), 4.0f, 4, glm::vec4(0, 1, 0, 1), 0.8f);
 	Plane* plane1 = new Plane(glm::vec2(0, 1), -20, 0.1f);		// Horizontal
 	Plane* plane2 = new Plane(glm::vec2(1, 0), -30, 0.1f);			// Vertical
 	Plane* plane3 = new Plane(glm::vec2(-1, 0), -30, 0.1f);	
-	Box* box1 = new Box(glm::vec2(0, 5), glm::vec2(0, 1), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0, 0.8f);
-	Box* box2 = new Box(glm::vec2(-2, 20), glm::vec2(0, 1), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0, 0.8f);
+	Box* box1 = new Box(glm::vec2(0, -7), glm::vec2(0, 1), 4.0f, glm::vec2(8, 3), glm::vec4(0.5f, 0.5f, 0.5f, 1), 0, 0.8f);
+	Box* box2 = new Box(glm::vec2(-7, 20), glm::vec2(0, 1), 4.0f, glm::vec2(4, 4), glm::vec4(1, 1, 0, 1), 0, 0.8f);
+
+	box1->SetKinematic(true);
 
 	ball1->SetLinearDrag(0.3f);
 	ball2->SetLinearDrag(0.3f);

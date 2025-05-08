@@ -32,7 +32,9 @@ public:
 	float getKineticEnergy();
 	void SetPosition(glm::vec2 position);
 
-
+	void SetKinematic(bool state) { m_isKinematic = state; }
+	bool isKinematic() { return m_isKinematic; }
+	
 protected:
 	glm::vec2 m_position;
 	glm::vec2 m_velocity;
@@ -45,5 +47,6 @@ protected:
 	//float m_elasticity;
 	float m_linearDrag;
 	float m_angularDrag;
+	bool m_isKinematic;
 };
 
