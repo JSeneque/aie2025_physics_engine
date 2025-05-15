@@ -7,7 +7,10 @@
 #include "Plane.h"
 #include "Box.h"
 #include "glm\ext.hpp"
+#include "Stick.h"
 #include <iostream>
+
+#include "Pocket.h"
 
 Application2D::Application2D() {
 
@@ -53,9 +56,9 @@ bool Application2D::startup() {
 
 
 	// balls setup
-	glm::vec2 rackOrigin =  {35.0f, 0.0f};
+	glm::vec2 rackOrigin =  {17.0f, 0.0f};
 
-	float ballRadius = 3.0f;
+	float ballRadius = 1.5f;
 	float ballDiameter = ballRadius * 2.0f;
 	float rowSpacing = ballDiameter;						// Horizontal distance between balls in a row
 	float colSpacing = ballDiameter * sqrt(3) / 2.0f;	// Vertical offset (60° triangle)
@@ -79,12 +82,13 @@ bool Application2D::startup() {
 			m_physicsScene->addActor(ball);
 		}
 	}
-
+	int tableWidth = 40;
+	int tableHeight = 20;
 	// table setup
-	Box* topBoundary = new Box(glm::vec2(0, 40), glm::vec2(0, 1), 4.0f, glm::vec2(80, 3), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
-	Box* rightBoundary = new Box(glm::vec2(-77, 0), glm::vec2(0, 1), 4.0f, glm::vec2(3, 40), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
-	Box* bottomBoundary = new Box(glm::vec2(0, -40), glm::vec2(0, 1), 4.0f, glm::vec2(80, 3), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
-	Box* leftBoundary = new Box(glm::vec2(77, 0), glm::vec2(0, 1), 4.0f, glm::vec2(3, 40), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* topBoundary = new Box(glm::vec2(0, 20), glm::vec2(0, 1), 4.0f, glm::vec2(tableWidth, 1), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* leftBoundary = new Box(glm::vec2(-39, 0), glm::vec2(0, 1), 4.0f, glm::vec2(1, tableHeight), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* bottomBoundary = new Box(glm::vec2(0, -20), glm::vec2(0, 1), 4.0f, glm::vec2(tableWidth, 1), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* rightBoundary = new Box(glm::vec2(39, 0), glm::vec2(0, 1), 4.0f, glm::vec2(1, tableHeight), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
 	
 	topBoundary->SetKinematic(true);
 	rightBoundary->SetKinematic(true);
@@ -95,20 +99,21 @@ bool Application2D::startup() {
 	m_physicsScene->addActor(rightBoundary);
 	m_physicsScene->addActor(bottomBoundary);
 	m_physicsScene->addActor(leftBoundary);
-
+ 
 	// table pockets
-	Sphere* pocket1 = new Sphere({-80,40}, {0,0},0,ballRadius, {0,0,0,1}, 0);
-	pocket1->SetKinematic(true);
-	//m_physicsScene->addActor(pocket1);
+	pockets.push_back({{tableWidth - 3, tableHeight - 3}, 3.0f});
 	
 	// setup cue ball
 
-	Sphere* cueBall = new Sphere({-50,0}, {300,1},4,ballRadius, {1,1,1,1}, 1);
+	cueBall = new Sphere({-25,0}, {0,0},4,ballRadius, {1,1,1,1}, 1);
 
 	cueBall->SetLinearDrag(0.3f);
 	cueBall->SetAngularDrag(0.3f);
 	
 	m_physicsScene->addActor(cueBall);
+
+	// stick
+	stick = new Stick(cueBall->getPosition());
 	
 	return true;
 }
@@ -127,12 +132,16 @@ void Application2D::update(float deltaTime) {
 	m_physicsScene->update(deltaTime);
 	m_physicsScene->draw();
 
+	
 
-	//ball1->fixedUpdate(glm::vec2(0.0, 0.0), 0.01);
+
+	stick->Update(deltaTime);
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+	if (input->isKeyDown(aie::INPUT_KEY_SPACE))
+		cueBall->setVelocity(stick->GetDirection() * stick->GetPower());
 }
 
 void Application2D::draw() {
@@ -142,12 +151,17 @@ void Application2D::draw() {
 
 	// begin drawing sprites
 	m_2dRenderer->begin();
+	
+	for (auto& pocket : pockets) {
+		pocket.Draw();
+	}
 
-	// draw your stuff here!
+	stick->Draw();
+	stick->DrawImGui();
 	static float aspectRatio = 16 / 9.f;
 	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100, -100 / aspectRatio, 100 / aspectRatio, -1.0f, 1.0f));
 
-	//m_physicsScene->draw();
+	
 
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);

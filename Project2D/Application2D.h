@@ -6,6 +6,8 @@
 
 class Sphere;
 class Plane;
+class Stick;
+class Pocket;
 
 class Application2D : public aie::Application {
 public:
@@ -25,6 +27,11 @@ protected:
 	aie::Font*			m_font;
 
 	PhysicsScene* m_physicsScene;
+
+	Stick* stick;
+	Sphere* cueBall;
+
+	std::vector<Pocket> pockets;
 
 	float m_timer;
 };
