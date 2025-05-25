@@ -18,6 +18,7 @@ public:
 	virtual void resetPosition() {}
 	virtual ShapeType getShapeID() { return m_shapeID;  }
 
+
 protected:
 	ShapeType m_shapeID;
 	float m_elasticity;

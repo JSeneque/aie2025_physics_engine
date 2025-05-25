@@ -116,6 +116,11 @@ float PhysicsScene::getTimeStep() const
 	return m_timeStep;
 }
 
+std::vector<PhysicsObject*>& PhysicsScene::getActors()
+{
+	return m_actors;
+}
+
 bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 {
 	// try to cast objects to sphere and sphere

@@ -25,6 +25,8 @@ public:
 	void setTimeStep(const float timeStep);
 	float getTimeStep() const;
 
+	std::vector<PhysicsObject*>& getActors();
+	
 	static bool plane2Plane(PhysicsObject*, PhysicsObject*);
 	static bool plane2Sphere(PhysicsObject*, PhysicsObject*);
 	static bool plane2Box(PhysicsObject*, PhysicsObject*);

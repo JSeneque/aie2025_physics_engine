@@ -132,10 +132,34 @@ void Application2D::update(float deltaTime) {
 	m_physicsScene->update(deltaTime);
 	m_physicsScene->draw();
 
-	
-
-
 	stick->Update(deltaTime);
+
+	// get all the actors in the scene
+	auto& actors = m_physicsScene->getActors();
+
+	// gets ready to remove any balls that may fall in the pockets
+	/*actors.erase (
+		// reorders the vector so that the kept elements come first
+		std::remove_if(actors.begin(), actors.end(),
+			// lambda function passing the remove_if to decide which elements to remove
+			 [](PhysicsObject* actor)
+			 {
+				 // tries to cast the actor to a sphere
+				 Sphere* ball = dynamic_cast<Sphere*>(actor);
+
+				 /*if (ball)
+				 {
+			 		
+					 /#2#/ check if ball is in a pocket
+					 for (Pocket& pocket : pockets )
+					 {
+						 
+					 }#2#
+					 printf("reach this!");
+				 }#1#
+			 }),
+			 actors.end()
+			 );*/
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
