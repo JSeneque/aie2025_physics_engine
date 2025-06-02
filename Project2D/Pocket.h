@@ -11,6 +11,9 @@ public:
     ~Pocket() {};
     void Update(float deltaTime);
     void Draw();
+
+    glm::vec2 GetPosition() const { return m_position; }
+    float GetRadius() const { return m_radius; }
     
 protected:
     glm::vec2 m_position;

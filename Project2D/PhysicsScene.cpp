@@ -30,7 +30,8 @@ void PhysicsScene::removeActor(PhysicsObject* actor)
 	// TODO: Maybe I can do this with checking first
 	if (it != m_actors.end())
 	{
-		m_actors.erase(find(m_actors.begin(), m_actors.end(), actor));
+		delete *it;
+		m_actors.erase(it);
 	}
 }
 
@@ -320,5 +321,6 @@ void PhysicsScene::ApplyContactForces(Rigidbody* body1, Rigidbody* body2, glm::v
 	if (body2)
 		body2->SetPosition(body2->getPosition() + (1 - body1Factor) * norm * pen);
 }
+
 
 

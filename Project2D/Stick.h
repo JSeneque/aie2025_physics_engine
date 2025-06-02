@@ -14,6 +14,8 @@ public:
     glm::vec2 GetDirection() const;
     float GetPower() const;
 
+    void SetPosition(const glm::vec2 newPosition);
+
 private:
     glm::vec2 m_cueBallPosition;
     float m_angle;

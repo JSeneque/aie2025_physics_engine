@@ -8,9 +8,12 @@
 #include "Box.h"
 #include "glm\ext.hpp"
 #include "Stick.h"
+#include "Pocket.h"
+#include "Ball.h"
 #include <iostream>
 
-#include "Pocket.h"
+#include "gl_core_4_4.h"
+
 
 Application2D::Application2D() {
 
@@ -68,7 +71,8 @@ bool Application2D::startup() {
 	{
 		for (int i = 0; i <= row; ++i)
 		{
-			Sphere* ball = new Sphere({0,0}, {0,0},4,ballRadius, {1,0,0,1}, 1);
+			//Sphere* ball = new Sphere({0,0}, {0,0},4,ballRadius, {1,0,0,1}, 1);
+			Ball* ball = new Ball({0,0}, {0,0},4,ballRadius, {1,0,0,1}, 1);
 			float x = rackOrigin.x + row * rowSpacing;
 			float y = rackOrigin.y - row * colSpacing / 2.0f + i * colSpacing;
 
@@ -85,10 +89,10 @@ bool Application2D::startup() {
 	int tableWidth = 40;
 	int tableHeight = 20;
 	// table setup
-	Box* topBoundary = new Box(glm::vec2(0, 20), glm::vec2(0, 1), 4.0f, glm::vec2(tableWidth, 1), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
-	Box* leftBoundary = new Box(glm::vec2(-39, 0), glm::vec2(0, 1), 4.0f, glm::vec2(1, tableHeight), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
-	Box* bottomBoundary = new Box(glm::vec2(0, -20), glm::vec2(0, 1), 4.0f, glm::vec2(tableWidth, 1), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
-	Box* rightBoundary = new Box(glm::vec2(39, 0), glm::vec2(0, 1), 4.0f, glm::vec2(1, tableHeight), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* topBoundary = new Box(glm::vec2(0, 20), glm::vec2(0, 1), 4.0f, glm::vec2(tableWidth, 2), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* leftBoundary = new Box(glm::vec2(-39, 0), glm::vec2(0, 1), 4.0f, glm::vec2(2, tableHeight + 2), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* bottomBoundary = new Box(glm::vec2(0, -20), glm::vec2(0, 1), 4.0f, glm::vec2(tableWidth, 2), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
+	Box* rightBoundary = new Box(glm::vec2(39, 0), glm::vec2(0, 1), 4.0f, glm::vec2(2, tableHeight + 2), glm::vec4(0.0f, 0.51f, 0.0f, 1), 0, 0.8f);
 	
 	topBoundary->SetKinematic(true);
 	rightBoundary->SetKinematic(true);
@@ -101,7 +105,12 @@ bool Application2D::startup() {
 	m_physicsScene->addActor(leftBoundary);
  
 	// table pockets
-	pockets.push_back({{tableWidth - 3, tableHeight - 3}, 3.0f});
+	pockets.push_back({{tableWidth - 3, tableHeight - 2}, 3.0f});
+	pockets.push_back({{- tableWidth + 3, tableHeight - 2}, 3.0f});
+	pockets.push_back({{tableWidth - 3, -tableHeight + 2}, 3.0f});
+	pockets.push_back({{- tableWidth + 3, -tableHeight + 2}, 3.0f});
+	pockets.push_back({{0, -tableHeight + 2}, 3.0f});
+	pockets.push_back({{0, tableHeight - 2}, 3.0f});
 	
 	// setup cue ball
 
@@ -133,33 +142,52 @@ void Application2D::update(float deltaTime) {
 	m_physicsScene->draw();
 
 	stick->Update(deltaTime);
-
-	// get all the actors in the scene
+	
+	// when a ball is pocketed
+	std::vector<PhysicsObject*> toRemove;
 	auto& actors = m_physicsScene->getActors();
 
-	// gets ready to remove any balls that may fall in the pockets
-	/*actors.erase (
-		// reorders the vector so that the kept elements come first
-		std::remove_if(actors.begin(), actors.end(),
-			// lambda function passing the remove_if to decide which elements to remove
-			 [](PhysicsObject* actor)
-			 {
-				 // tries to cast the actor to a sphere
-				 Sphere* ball = dynamic_cast<Sphere*>(actor);
+	for (auto& actor : actors)
+	{
+		Ball* ball = dynamic_cast<Ball*>(actor);
+		if (!ball || ball->IsPocketed())
+		{
+			Sphere* sphere = dynamic_cast<Sphere*>(actor);
 
-				 /*if (ball)
-				 {
-			 		
-					 /#2#/ check if ball is in a pocket
-					 for (Pocket& pocket : pockets )
-					 {
-						 
-					 }#2#
-					 printf("reach this!");
-				 }#1#
-			 }),
-			 actors.end()
-			 );*/
+			// check if cue ball because it is a sphere and white
+			// could improve with a cue ball class
+			if (sphere && sphere->getColour() == glm::vec4(1.0f))
+			{
+				if (sphere->getVelocity() == glm::vec2(0.0f))
+				{
+					stick->SetPosition(sphere->getPosition());
+				}
+			}
+			continue;
+		}
+
+		for (auto& pocket : pockets)
+		{
+			if (ball->IsInPocket(pocket)) {
+				ball->setVelocity({0, 0});
+				ball->SetKinematic(true);
+				ball->SetPocketed(true);
+
+				toRemove.push_back(ball);
+				std::cout << "Ball pocketed!" << std::endl;
+				break;
+				
+			}
+		}
+	}
+
+	// now remove the pocketed balls
+	for (auto& actor : toRemove)
+	{
+		m_physicsScene->removeActor(actor);
+	}
+	
+	
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))

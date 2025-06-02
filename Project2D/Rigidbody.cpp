@@ -104,6 +104,9 @@ void Rigidbody::SetPosition(glm::vec2 position)
 
 void Rigidbody::resolveCollision(Rigidbody* other, glm::vec2 contact, glm::vec2* collisionNormal, float pen)
 {
+    
+    if (other->isKinematic()) return;
+    
     // find the vector between their centres, or use the provided direction
     // of force, and make sure its normalised
     glm::vec2 normal = glm::normalize(collisionNormal ? *collisionNormal : 

@@ -3,6 +3,7 @@
 
 void Pocket::Update(float deltaTime)
 {
+    
 }
 
 void Pocket::Draw()

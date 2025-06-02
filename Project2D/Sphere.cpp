@@ -21,7 +21,7 @@ void Sphere::draw()
         m_radius;
 
     aie::Gizmos::add2DCircle(m_position, m_radius, 24, m_colour);
-    aie::Gizmos::add2DLine(m_position, m_position + end, glm::vec4(1, 1, 1, 1));
+    //aie::Gizmos::add2DLine(m_position, m_position + end, glm::vec4(1, 1, 1, 1));
 }
 
 float Sphere::getRadius() const

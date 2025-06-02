@@ -20,8 +20,11 @@ void Stick::Draw()
 
 void Stick::DrawImGui()
 {
+    ImGui::Text("Cue Settings");
+    ImGui::Indent();
     ImGui::SliderAngle("Angle", &m_angle, 0, 360);
-    ImGui::SliderFloat("Power", &m_power, 0.0f, 500.0f);
+    ImGui::SliderFloat("Power", &m_power, 0.0f, 250.0f);
+    ImGui::Unindent();
 }
 
 glm::vec2 Stick::GetDirection() const
@@ -32,5 +35,10 @@ glm::vec2 Stick::GetDirection() const
 float Stick::GetPower() const
 {
     return m_power;
+}
+
+void Stick::SetPosition(const glm::vec2 newPosition)
+{
+    m_cueBallPosition = newPosition;
 }
 
